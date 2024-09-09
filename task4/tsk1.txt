@@ -1,0 +1,23 @@
+class NumberArray(private val numbers: Array<Int>) {
+
+    fun sumOfPositive(): Int {
+        return numbers.filter { it > 0 }.sum()
+    }
+
+    fun product(): Int {
+        return numbers.reduce { acc, i -> acc * i }
+    }
+
+    fun average(): Double {
+        return numbers.average()
+    }
+}
+
+fun main() {
+    val array = arrayOf(1, -2, 3, 4, -5, 6)
+    val numberArray = NumberArray(array)
+
+    println("Сумма положительных элементов: ${numberArray.sumOfPositive()}")
+    println("Произведение элементов массива: ${numberArray.product()}")
+    println("Среднее арифметическое значение элементов массива: ${numberArray.average()}")
+}

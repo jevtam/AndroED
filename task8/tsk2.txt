@@ -1,0 +1,26 @@
+fun main() {
+    val words: List<String?> = listOf("hello", null, "world", "kotlin", null)
+
+    println("Используя оператор if:")
+    for (word in words) {
+        if (word != null) {
+            println(word.uppercase())
+        }
+    }
+
+    println("\nИспользуя безопасный вызов ?:")
+    for (word in words) {
+        println(word?.uppercase())
+    }
+
+    println("\nИспользуя функцию let:")
+    for (word in words) {
+        word?.let { println(it.uppercase()) }
+    }
+
+    println("\nИспользуя Элвис-оператор ?:")
+    for (word in words) {
+        val result = word?.uppercase() ?: "EMPTY"
+        println(result)
+    }
+}

@@ -1,0 +1,66 @@
+open class Vehicle {
+    open val speed: Int = 0
+    open val name: String = "Транспортное средство"
+
+    open fun start() {
+        println("$name начал движение со скоростью $speed км/ч")
+    }
+
+    open fun stop() {
+        println("$name остановился")
+    }
+}
+
+class Boat : Vehicle() {
+    override val speed: Int = 30
+    override val name: String = "Лодка"
+
+    override fun start() {
+        println("$name поплыла со скоростью $speed км/ч")
+    }
+
+    override fun stop() {
+        println("$name остановилась на воде")
+    }
+}
+
+class Plane : Vehicle() {
+    override val speed: Int = 800
+    override val name: String = "Самолет"
+
+    override fun start() {
+        println("$name взлетел со скоростью $speed км/ч")
+    }
+
+    override fun stop() {
+        println("$name приземлился и остановился")
+    }
+}
+
+class Tank : Vehicle() {
+    override val speed: Int = 40
+    override val name: String = "Танк"
+
+    override fun start() {
+        println("$name поехал со скоростью $speed км/ч")
+    }
+
+    override fun stop() {
+        println("$name остановился на поле боя")
+    }
+}
+
+fun main() {
+    val boat = Boat()
+    val plane = Plane()
+    val tank = Tank()
+
+    boat.start()
+    boat.stop()
+
+    plane.start()
+    plane.stop()
+
+    tank.start()
+    tank.stop()
+}

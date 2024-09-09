@@ -1,0 +1,58 @@
+fun main() {
+    val numbers = listOf(-5, 3, -2, 8, -1, 6)
+    val negativeNumbers = numbers.filter { it < 0 }
+    println("Отрицательные числа: $negativeNumbers")
+
+    val changedNumbers = numbers.map { if (it > 0) -it else it }
+    println("Числа с измененным знаком: $changedNumbers")
+
+    val squaredNumbers = numbers.map { it * it }
+    println("Квадраты чисел: $squaredNumbers")
+
+    val rangeNumbers = (1..7).toList()
+    val joinedNumbers = rangeNumbers.joinToString(separator = "+", prefix = "=", postfix = "=")
+    println("Список с числами: $joinedNumbers")
+
+    val phoneBook = mapOf(
+        "Alex" to "+1234567890",
+        "Bob" to "+7890123456",
+        "Charlie" to "+1230987654",
+        "Diana" to "+4567890123"
+    )
+    val countryCode = "+123"
+    val filteredPhoneBook = phoneBook.filter { it.value.startsWith(countryCode) }
+    println("Телефонная книга с кодом $countryCode: $filteredPhoneBook")
+
+    println("Введите число от 0 до 100:")
+    val number = readln().toInt()
+    println("Число прописью: ${numberToWords(number)}")
+
+    val timeString = "01:20:12"
+    val secondsSinceStartOfDay = calculateSeconds(timeString)
+    println("Секунд с начала дня: $secondsSinceStartOfDay")
+}
+
+fun numberToWords(number: Int): String {
+    val units = listOf(
+        "ноль", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять", "десять",
+        "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"
+    )
+    val tens = listOf(
+        "", "", "двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто"
+    )
+
+    return when {
+        number < 20 -> units[number]
+        number < 100 -> "${tens[number / 10]} ${if (number % 10 != 0) units[number % 10] else ""}".trim()
+        number == 100 -> "сто"
+        else -> "Неверный ввод"
+    }
+}
+
+fun calculateSeconds(time: String): Int {
+    val timeParts = time.split(":")
+    val hours = timeParts[0].toInt()
+    val minutes = timeParts[1].toInt()
+    val seconds = timeParts[2].toInt()
+    return hours * 3600 + minutes * 60 + seconds
+}

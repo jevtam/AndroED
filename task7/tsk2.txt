@@ -1,0 +1,43 @@
+class Point(var x: Int, var y: Int) {
+    override fun toString(): String {
+        return "Текущие координаты x: $x, y: $y"
+    }
+}
+
+enum class Command {
+    UP, DOWN, LEFT, RIGHT
+}
+
+class Turtle {
+    fun move(point: Point, command: Command) {
+        when (command) {
+            Command.UP -> {
+                point.y += 1
+                println("Произведено перемещение по оси Х на 0, по оси У на +1")
+            }
+            Command.DOWN -> {
+                point.y -= 1
+                println("Произведено перемещение по оси Х на 0, по оси У на -1")
+            }
+            Command.LEFT -> {
+                point.x -= 1
+                println("Произведено перемещение по оси Х на -1, по оси У на 0")
+            }
+            Command.RIGHT -> {
+                point.x += 1
+                println("Произведено перемещение по оси Х на +1, по оси У на 0")
+            }
+        }
+        println(point)
+    }
+}
+
+fun main() {
+    val point = Point(0, 0)
+    val turtle = Turtle()
+
+    turtle.move(point, Command.UP)
+    turtle.move(point, Command.RIGHT)
+    turtle.move(point, Command.DOWN)
+    turtle.move(point, Command.LEFT)
+}

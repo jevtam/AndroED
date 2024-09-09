@@ -1,0 +1,77 @@
+fun main() {
+while (true) {
+println("Выберите задачу для выполнения:")
+println("1. Сумма первой и последней цифры числа")
+println("2. Ввод чисел до 0, подсчет количества, суммы и среднего арифметического")
+println("3. Угадай число")
+println("4. Выйти")
+
+when (readln().toInt()) {
+1 -> task1()
+2 -> task2()
+3 -> task3()
+4 -> {
+println("Выход из программы.")
+break
+}
+else -> println("Неверный выбор. Попробуйте снова.")
+}
+}
+}
+
+fun task1() {
+println("Задача 1: Сумма первой и последней цифры числа")
+println("Введите целое положительное число:")
+val input = readln()
+
+if (input.isNotEmpty() && input.all { it.isDigit() }) {
+val firstDigit = input.first().toString().toInt()
+val lastDigit = input.last().toString().toInt()
+val sum = firstDigit + lastDigit
+println("Сумма первой и последней цифры: $sum")
+} else {
+println("Введено не целое положительное число")
+}
+}
+
+fun task2() {
+println("Задача 2: Ввод чисел до 0, подсчет количества, суммы и среднего арифметического")
+var count = 0
+var sum = 0.0
+
+while (true) {
+println("Введите число (0 для завершения):")
+val number = readln().toInt()
+if (number == 0) break
+sum += number
+count++
+}
+
+if (count > 0) {
+val average = sum / count
+println("Количество введенных чисел: $count")
+println("Сумма: $sum")
+println("Среднее арифметическое: $average")
+} else {
+println("Не было введено ни одного числа, кроме нуля")
+}
+}
+
+fun task3() {
+println("Задача 3: Угадай число")
+val randomNumber = (0..10).random()
+println("Угадайте число от 0 до 10:")
+
+while (true) {
+val guess = readln().toInt()
+
+when {
+guess > randomNumber -> println("Много")
+guess < randomNumber -> println("Мало")
+else -> {
+println("Угадал!")
+break
+}
+}
+}
+}

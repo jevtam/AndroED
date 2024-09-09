@@ -1,0 +1,115 @@
+fun main() {
+    while (true) {
+        println("Выберите задачу для выполнения:")
+        println("1. Вывод первых n простых чисел")
+        println("2. Вывод элементов массива, которые больше соседних")
+        println("3. Найти произведение элементов массива, min и max элемент")
+        println("4. Выйти")
+
+        when (readln().toInt()) {
+            1 -> task1()
+            2 -> task2()
+            3 -> task3()
+            4 -> {
+                println("Выход из программы.")
+                break
+            }
+            else -> println("Неверный выбор. Попробуйте снова.")
+        }
+    }
+}
+
+fun isPrime(number: Int): Boolean {
+    if (number < 2) return false
+    for (i in 2..Math.sqrt(number.toDouble()).toInt()) {
+        if (number % i == 0) return false
+    }
+    return true
+}
+
+fun task1() {
+    println("Задача 1: Вывод первых n простых чисел")
+    println("Введите количество простых чисел:")
+    val n = readln().toInt()
+    var count = 0
+    var currentNumber = 2
+
+    while (count < n) {
+        if (isPrime(currentNumber)) {
+            count++
+            println("$count-ое число: $currentNumber")
+        }
+        currentNumber++
+    }
+}
+
+fun task2() {
+    println("Задача 2: Вывод элементов массива, которые больше соседних")
+    val array = arrayOf(3, 5, 7, 2, 8, 6, 4)
+
+    println("Используя цикл for:")
+    for (i in 1 until array.size - 1) {
+        if (array[i] > array[i - 1] && array[i] > array[i + 1]) {
+            println(array[i])
+        }
+    }
+
+    println("Используя цикл while:")
+    var i = 1
+    while (i < array.size - 1) {
+        if (array[i] > array[i - 1] && array[i] > array[i + 1]) {
+            println(array[i])
+        }
+        i++
+    }
+
+    println("Используя forEach:")
+    array.forEachIndexed { index, value ->
+        if (index > 0 && index < array.size - 1 && value > array[index - 1] && value > array[index + 1]) {
+            println(value)
+        }
+    }
+}
+
+fun task3() {
+    println("Задача 3: Найти произведение элементов массива, min и max элемент")
+    val array = arrayOf(3, 5, 7, 2, 8, 6, 4)
+
+    println("Используя цикл for:")
+    var productFor = 1
+    var minFor = array[0]
+    var maxFor = array[0]
+    for (element in array) {
+        productFor *= element
+        if (element < minFor) minFor = element
+        if (element > maxFor) maxFor = element
+    }
+    println("Произведение: $productFor, Min: $minFor, Max: $maxFor")
+
+    println("Используя цикл while:")
+    var productWhile = 1
+    var minWhile = array[0]
+    var maxWhile = array[0]
+    var index = 0
+    while (index < array.size) {
+        val element = array[index]
+        productWhile *= element
+        if (element < minWhile) minWhile = element
+        if (element > maxWhile) maxWhile = element
+        index++
+    }
+    println("Произведение: $productWhile, Min: $minWhile, Max: $maxWhile")
+
+    println("Используя reduce():")
+    val productReduce = array.reduce { acc, i -> acc * i }
+    println("Произведение: $productReduce")
+
+    println("Используя forEach:")
+    var productForEach = 1
+    array.forEach { productForEach *= it }
+    println("Произведение: $productForEach")
+
+    println("Используя min() и max():")
+    val minElement = array.minOrNull()
+    val maxElement = array.maxOrNull()
+    println("Min: $minElement, Max: $maxElement")

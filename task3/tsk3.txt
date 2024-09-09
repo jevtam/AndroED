@@ -1,0 +1,44 @@
+fun main() {
+    println("Введите коэффициенты квадратного уравнения ax^2 + bx + c = 0")
+    print("Введите a: ")
+    val a = readln().toDouble()
+    print("Введите b: ")
+    val b = readln().toDouble()
+    print("Введите c: ")
+    val c = readln().toDouble()
+
+    quadraticRoot(a, b, c)
+}
+
+fun sqr(n: Double): Double {
+    return n * n
+}
+
+fun discriminant(a: Double, b: Double, c: Double): Double {
+    return sqr(b) - 4 * a * c
+}
+
+fun rootsNumber(a: Double, b: Double, c: Double): Int {
+    val d = discriminant(a, b, c)
+    return when {
+        d > 0 -> 2
+        d == 0.0 -> 1
+        else -> 0
+    }
+}
+
+fun quadraticRoot(a: Double, b: Double, c: Double) {
+    val d = discriminant(a, b, c)
+    when (rootsNumber(a, b, c)) {
+        2 -> {
+            val root1 = (-b + Math.sqrt(d)) / (2 * a)
+            val root2 = (-b - Math.sqrt(d)) / (2 * a)
+            println("Уравнение имеет два корня: x1 = $root1, x2 = $root2")
+        }
+        1 -> {
+            val root = -b / (2 * a)
+            println("Уравнение имеет один корень: x = $root")
+        }
+        0 -> println("Уравнение не имеет действительных корней")
+    }
+}

@@ -1,0 +1,27 @@
+class EnhancedArray(private val numbers: Array<Int>) {
+
+    fun transform(): Array<Int> {
+        return numbers.map { if (it % 2 == 0) it * 2 else it * 3 }.toTypedArray()
+    }
+
+    fun maxElement(): Int {
+        return numbers.maxOrNull() ?: throw NoSuchElementException("Массив пуст")
+    }
+
+    fun minElement(): Int {
+        return numbers.minOrNull() ?: throw NoSuchElementException("Массив пуст")
+    }
+
+    val sum: Int
+        get() = numbers.sum()
+}
+
+fun main() {
+    val array = arrayOf(1, 2, 3, 4, 5)
+    val enhancedArray = EnhancedArray(array)
+
+    println("Массив после трансформации: ${enhancedArray.transform().joinToString()}")
+    println("Максимальный элемент: ${enhancedArray.maxElement()}")
+    println("Минимальный элемент: ${enhancedArray.minElement()}")
+    println("Сумма элементов массива: ${enhancedArray.sum}")
+}

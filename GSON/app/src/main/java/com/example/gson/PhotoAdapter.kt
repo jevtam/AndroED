@@ -1,19 +1,15 @@
 package com.example.gson
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import timber.log.Timber
 
 class PhotoAdapter(
     private val photoLinks: List<String>,
-    private val context: Context
+    private val onPhotoClick: (String) -> Unit
 ) : RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
 
     inner class PhotoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -28,12 +24,12 @@ class PhotoAdapter(
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
         val photoUrl = photoLinks[position]
 
-        Glide.with(context).load(photoUrl).into(holder.imageView)
+        Glide.with(holder.imageView.context)
+            .load(photoUrl)
+            .into(holder.imageView)
 
         holder.imageView.setOnClickListener {
-            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            clipboard.setPrimaryClip(ClipData.newPlainText("URL", photoUrl))
-            Timber.i("Copied to clipboard: $photoUrl")
+            onPhotoClick(photoUrl)
         }
     }
 

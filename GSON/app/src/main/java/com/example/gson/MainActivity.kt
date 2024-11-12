@@ -1,5 +1,8 @@
 package com.example.gson
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -53,9 +56,17 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     val recyclerView = findViewById<RecyclerView>(R.id.rView)
                     recyclerView.layoutManager = GridLayoutManager(this@MainActivity, 2)
-                    recyclerView.adapter = PhotoAdapter(photoLinks, this@MainActivity)
+                    recyclerView.adapter = PhotoAdapter(photoLinks) { photoUrl ->
+                        copyToClipboard(photoUrl)
+                    }
                 }
             }
         })
+    }
+
+    private fun copyToClipboard(photoUrl: String) {
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText("URL", photoUrl))
+        Timber.i("Copied to clipboard: $photoUrl")
     }
 }

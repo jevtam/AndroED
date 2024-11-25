@@ -1,35 +1,20 @@
 package com.example.gson
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
+import okhttp3.*
+import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var photoAdapter: PhotoAdapter
-
-    private val picViewerResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val data = result.data
-            val picUrl = data?.getStringExtra("picUrl")
-            val isFavorite = data?.getBooleanExtra("isFavorite", false) ?: false
-
-            if (isFavorite && picUrl != null) {
-                Snackbar.make(
-                    recyclerView, "Картинка добавлена в избранное", Snackbar.LENGTH_LONG
-                ).setAction("Открыть") {
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(picUrl))
-                    startActivity(browserIntent)
-                }.show()
-            }
-        }
-    }
+    private val photoUrls = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,19 +23,41 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.rView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        val photoUrls = listOf(
-            "https://farm66.staticflickr.com/65535/51182261779_0c3c64a8db_z.jpg",
-            "https://farm66.staticflickr.com/65535/51181413271_8b1d9a6243_z.jpg",
-            "https://farm66.staticflickr.com/65535/51181228281_46671aaf4b_z.jpg",
-            "https://farm66.staticflickr.com/65535/51180669862_2b46bda8ff_z.jpg",
-            "https://farm66.staticflickr.com/65535/51180537716_7b25ef5f1e_z.jpg"
-        )
+        fetchPhotos()
+    }
 
-        photoAdapter = PhotoAdapter(photoUrls) { photoUrl ->
-            val intent = Intent(this, PicViewer::class.java)
-            intent.putExtra("picUrl", photoUrl)
-            picViewerResultLauncher.launch(intent)
-        }
-        recyclerView.adapter = photoAdapter
+    private fun fetchPhotos() {
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url("https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ff49fcd4d4a08aa6aafb6ea3de826464&tags=cat&format=json&nojsoncallback=1")
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                response.body?.string()?.let { responseBody ->
+                    val gson = Gson()
+                    val wrapper = gson.fromJson(responseBody, Wrapper::class.java)
+                    val photos = wrapper.photos.photo
+
+                    photoUrls.clear()
+                    photoUrls.addAll(photos.map { photo ->
+                        "https://farm${photo.farm}.staticflickr.com/${photo.server}/${photo.id}_${photo.secret}_z.jpg"
+                    })
+
+                    runOnUiThread {
+                        photoAdapter = PhotoAdapter(photoUrls) { photoUrl ->
+                            val intent = Intent(this@MainActivity, PicViewer::class.java)
+                            intent.putExtra("picUrl", photoUrl)
+                            startActivity(intent)
+                        }
+                        recyclerView.adapter = photoAdapter
+                    }
+                }
+            }
+        })
     }
 }

@@ -6,8 +6,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import android.content.Intent
-
 
 class PhotoAdapter(
     private val photoLinks: List<String>,
@@ -31,9 +29,7 @@ class PhotoAdapter(
             .into(holder.imageView)
 
         holder.imageView.setOnClickListener {
-            val intent = Intent(holder.imageView.context, PicViewer::class.java)
-            intent.putExtra("picUrl", photoUrl)
-            holder.imageView.context.startActivity(intent)
+            onPhotoClick(photoUrl)
         }
     }
 

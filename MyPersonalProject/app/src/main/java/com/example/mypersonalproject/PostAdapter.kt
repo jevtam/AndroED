@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mypersonalproject.databinding.ItemPostBinding
 import com.example.mypersonalproject.models.Post
+import com.example.mypersonalproject.R
+import android.util.Log
 
 class PostsAdapter(
     private val onFavoriteClicked: (Post) -> Unit,
@@ -19,11 +21,13 @@ class PostsAdapter(
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = getItem(position)
         holder.bind(post)
-
+        Log.d("Adapter", "Binding post: ${post.title}, isFavorite: ${post.isFavorite}")
         holder.binding.favoriteButton.setOnClickListener {
             val updatedPost = post.copy(isFavorite = !post.isFavorite)
             onFavoriteClicked(updatedPost)
-            notifyItemChanged(position)
+            val index = currentList.indexOf(post)
+            Log.d("Adapter", "Index of updated post: $index")
+            notifyItemChanged(index)
         }
     }
 

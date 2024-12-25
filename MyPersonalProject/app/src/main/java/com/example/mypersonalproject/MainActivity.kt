@@ -16,6 +16,7 @@ import PostsAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.util.Log
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -74,35 +75,43 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchPosts() {
-        val postsFromDb = database.postDao().getAllPosts()
-
-        if (postsFromDb.isNotEmpty()) {
-            adapter.submitList(postsFromDb)
-        } else {
-            RetrofitClient.instance.getPosts().enqueue(object : Callback<List<Post>> {
-                override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
-                    if (response.isSuccessful) {
-                        response.body()?.let { posts ->
-                            adapter.submitList(posts)
-                            database.postDao().insertPosts(posts)
+        lifecycleScope.launch {
+            val postsFromDb = withContext(Dispatchers.IO) {
+                database.postDao().getAllPosts()
+            }
+            Log.d("Database", "Posts in database: $postsFromDb")
+            if (postsFromDb.isNotEmpty()) {
+                adapter.submitList(postsFromDb)
+            } else {
+                RetrofitClient.instance.getPosts().enqueue(object : Callback<List<Post>> {
+                    override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
+                        if (response.isSuccessful) {
+                            response.body()?.let { posts ->
+                                lifecycleScope.launch {
+                                    withContext(Dispatchers.IO) {
+                                        database.postDao().insertPosts(posts)
+                                    }
+                                    adapter.submitList(posts)
+                                }
+                            }
+                        } else {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Error: ${response.message()}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-                    } else {
+                    }
+
+                    override fun onFailure(call: Call<List<Post>>, t: Throwable) {
                         Toast.makeText(
                             this@MainActivity,
-                            "Error: ${response.message()}",
+                            "Failed: ${t.message}",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
-                }
-
-                override fun onFailure(call: Call<List<Post>>, t: Throwable) {
-                    Toast.makeText(
-                        this@MainActivity,
-                        "Failed: ${t.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+                })
+            }
         }
     }
 
@@ -111,8 +120,11 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 database.postDao().updatePost(post)
+                Log.d("Database", "Post updated: ${post.title}, isFavorite: ${post.isFavorite}")
             }
-            adapter.notifyItemChanged(adapter.currentList.indexOf(post))
         }
+        val index = adapter.currentList.indexOf(post)
+        Log.d("MainActivity", "Index of updated post in adapter: $index")
+        adapter.notifyItemChanged(index)
     }
 }
